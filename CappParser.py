@@ -2,7 +2,7 @@
 
 
 #Parses CAPP Reports into an sqlite file
-#Usage: CappParser FILES
+#Usage: CappParser [FILES]
 from HTMLParser import HTMLParser
 import sqlite3, glob, sys
 
@@ -79,12 +79,13 @@ def parse(file_name, c):
         c.execute("replace into grades(id, prefix, num, name, grade) values (%d, '%s', %d, '%s', '%s')" % t)
 
 def run():
-    if len(sys.argv) < 2:
-        print 'usage: %s FILES' % sys.argv[0]
-        print 'example: %s *.htm' % sys.argv[0]
+    if len(sys.argv) < 2 or '-h' in sys.argv[1:]:
+        print 'usage: %s [FILES]' % sys.argv[0]
+        print 'example: %s *.htm *.html' % sys.argv[0]
         return
 
-    files = glob.glob(sys.argv[1])
+    files = []
+    for i in sys.argv[1:]: files += glob.glob(i)
     if len(files) < 1: return
 
     db = sqlite3.connect('grades.sqlite')
