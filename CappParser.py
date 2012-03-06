@@ -31,8 +31,10 @@ class Class():
 
 def parse(file_name, c):
     Id = 0
+    Name = ''
     data = []
     isId = False
+    isName = False
     isClass = False
     tmpClass = None
     classNum = 0
@@ -51,6 +53,9 @@ def parse(file_name, c):
                     if isId:
                         Id = int(tags[1])
                         isId = False
+                    elif isName:
+                        Name = tags[1]
+                        isName = False
                     elif isClass:
                         classNum += 1
                         if classNum == 1: tmpClass.num = int(tags[1])
@@ -68,12 +73,14 @@ def parse(file_name, c):
                             isClass = True
                             classNum = 0
                         except:
-                            if tags[1] == 'Student ID:':
+                            if tags[1] == 'Name:':
+                                isName = True
+                            elif tags[1] == 'Student ID:':
                                 isId = True
                 tag = tag+'>'
     print 'Parsed: %s' % file_name
 
-    c.execute('insert or ignore into users(id) values (%d)' % Id)
+    c.execute("insert or ignore into users(id, name) values (%d, '%s')" % (Id, Name))
     for i in data:
         t = (Id, i.prefix, i.num, i.name, i.grade)
         c.execute("replace into grades(id, prefix, num, name, grade) values (%d, '%s', %d, '%s', '%s')" % t)
@@ -90,7 +97,10 @@ def run():
 
     db = sqlite3.connect('grades.sqlite')
     c = db.cursor()
-    c.execute('create table if not exists users(id integer primary key)')
+    c.execute('''create table if not exists users(
+            id integer primary key,
+            name varchar
+            )''')
     c.execute('''create table if not exists grades(
         id integer,
         prefix varchar,
