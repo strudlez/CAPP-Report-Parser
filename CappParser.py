@@ -3,7 +3,6 @@
 
 #Parses CAPP Reports into an sqlite file
 #Usage: CappParser [FILES]
-from HTMLParser import HTMLParser
 import sqlite3, glob, sys
 
 def unescape(s):
@@ -19,6 +18,7 @@ prefixes = ('ARCH', 'ARTS', 'ASTR', 'BCBP', 'BIOL', 'BMED', 'CHEM', 'CHME',
         'LANG', 'LGHT', 'LITR', 'MANE', 'MATH', 'MATP', 'MGMT', 'MTLE',
         'PHIL', 'PHYS', 'PSYC', 'STSH', 'STSS', 'USAF', 'USAR', 'USNA',
         'WRIT')
+
 class Class():
     prefix = ''
     num = 0
@@ -40,7 +40,6 @@ def parse(file_name, c):
     classNum = 0
     f = open(file_name)
     d = f.read()
-    
 
     for line in d.split('<'):
         line = '<'+line
@@ -80,10 +79,12 @@ def parse(file_name, c):
                 tag = tag+'>'
     print 'Parsed: %s' % file_name
 
-    c.execute("insert or ignore into users(id, name) values (%d, '%s')" % (Id, Name))
+    c.execute("""insert or ignore into users(id, name, undergrad) values
+                (%d, '%s', 1)""" % (Id, Name))
     for i in data:
         t = (Id, i.prefix, i.num, i.name, i.grade)
-        c.execute("replace into grades(id, prefix, num, name, grade) values (%d, '%s', %d, '%s', '%s')" % t)
+        c.execute("""replace into grades(id, prefix, num, name, grade) values 
+                (%d, '%s', %d, '%s', '%s')""" % t)
 
 def run():
     if len(sys.argv) < 2 or '-h' in sys.argv[1:]:
@@ -98,8 +99,10 @@ def run():
     db = sqlite3.connect('grades.sqlite')
     c = db.cursor()
     c.execute('''create table if not exists users(
-            id integer primary key,
-            name varchar
+            id integer,
+            count INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar,
+            undergrad boolean
             )''')
     c.execute('''create table if not exists grades(
         id integer,
