@@ -80,11 +80,11 @@ def parse(file_name, c):
     print 'Parsed: %s' % file_name
 
     c.execute("""insert or ignore into users(id, name, undergrad) values
-                (%d, '%s', 1)""" % (Id, Name))
+                (?, ?, 1)""", (Id, Name))
     for i in data:
         t = (Id, i.prefix, i.num, i.name, i.grade)
         c.execute("""replace into grades(id, prefix, num, name, grade) values 
-                (%d, '%s', %d, '%s', '%s')""" % t)
+                (?, ?, ?, ?, ?)""", t)
 
 def run():
     if len(sys.argv) < 2 or '-h' in sys.argv[1:]:
