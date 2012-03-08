@@ -87,6 +87,7 @@ def find_help(c, prefix, num, cutoff, ap):
 def is_good_grade(grade, cutoff, ap):
     grades = 'ABCPDF'
     if grade == 'AP': grade = ap
+    else: grade = grade[0]
     return grade in grades and grades.find(grade) <= grades.find(cutoff)
 
 def get_good_grades(c, id, cutoff, ap):
