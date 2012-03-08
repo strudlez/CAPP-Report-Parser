@@ -100,8 +100,8 @@ def get_current_classes(c, id):
     return [i for i in c]
 
 def get_data(c, student):
-    c.execute("SELECT id, name FROM users where count=? or name=?", 
-            (student, student))
+    c.execute("SELECT id, name FROM users where id=? or count=? or name=?", 
+            (student, student,student))
     id = [i for i in c]
     if len(id): return id[0]
     else: return None
