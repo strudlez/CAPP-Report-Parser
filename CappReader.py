@@ -104,7 +104,7 @@ def get_data(c, student):
             (student, student,student))
     id = [i for i in c]
     if len(id): return id[0]
-    else: return None
+    else: return None, None
 
 def check_table(c, name):
     c.execute("""SELECT name FROM sqlite_master
